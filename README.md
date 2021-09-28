@@ -44,7 +44,7 @@ Create a conda environment on your computer and run everything locally.
 
 ## Option 2
 
-You don't want to install anything *AND* you have a Renater account (any university, CNRS, INRAE, etc.)
+If you have a Renater account (any university, CNRS, INRAE, etc.)
 
 1. Go to https://jupyterhub.ijclab.in2p3.fr/  
 2. Start your server
