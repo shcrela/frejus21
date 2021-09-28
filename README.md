@@ -10,7 +10,7 @@ Create a conda environment on your computer and run everything locally.
 3. `git clone https://github.com/shcrela/frejus21.git`  
 4.  `cd frejus21`
 5. `conda env create -f environment.yml`
-6. Downloading data (click on your group to see the code to copy/paste into your terminal)
+6. Download the data (click on your group to see the code to copy/paste into your terminal)
 <details>
   <summary>Group A1</summary>
   
