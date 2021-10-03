@@ -4,7 +4,7 @@
 
 ## Option 1
 
-Run everything locally. (You must have miniconda/anaconda installed)
+Run everything locally. (You must have ana(mini)conda installed)
 
 1. Open the terminal[<sup>1</sup>](#fn1) on your computer and navigate to the folder of your choice. 
 2. Copy/Paste the following commands into your terminal:
@@ -73,3 +73,7 @@ If you have a Renater account (any university, CNRS, INRAE, etc.)
 If neither of the above suits you.
 
 Click on the binder icon
+
+```python
+
+```
