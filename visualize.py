@@ -527,6 +527,8 @@ class NavigationButtons(object):
 
 class ShowSelected(object):
     """Select a span and plot a map of a chosen function in that span.
+    Right-Click (or middle-click) on the image to see the spectrum
+    corresponding to that pixel.
 
     To be used for visual exploration of the maps.
     The lower part of the figure contains the spectra you can scroll through
@@ -598,13 +600,34 @@ class ShowSelected(object):
         self.func_choice.on_clicked(self.determine_func)
 
         # Plot the empty image:
-        self.imup = self.aximg.imshow(np.empty_like(self.map_spectra[:,:,0]))
+        self.imup = self.aximg.imshow(np.empty_like(self.map_spectra[:,:,0]),
+                                     interpolation='gaussian')
         if isinstance(map_spectra, WDF):
             self.aximg.set_xlabel(f"units :  {self.xlabel:.1g}")
             self.aximg.set_ylabel(f"units :  {self.ylabel:.1g}")
+        
+        self.fig.canvas.mpl_connect('button_press_event', self.onclick)
         plt.show()
 
+    def onclick(self, event):
+        """Right-Clicking on a pixel will show the spectrum
+        corresponding to that pixel on the bottom plot"""
+        x_pos = round(event.xdata)
+        y_pos = round(event.ydata)
+        print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+              ('double' if event.dblclick else 'single', event.button,
+               event.x, event.y, event.xdata, event.ydata))
+        if event.button!=1:
+            if x_pos<=self.nx and y_pos<=self.ny and x_pos*y_pos>=0:
+                broj = round(y_pos*self.nx + x_pos)
+                self.sframe.set_val(broj)
+                self.scroll_spectra(broj)
+        else:
+            pass
+
+    
     def determine_func(self, label):
+        "Recover the function name from button clicked"""
         self.func = label
         if self.xmin: # if area selected, change img on click
             self.draw_img()
@@ -619,15 +642,21 @@ class ShowSelected(object):
         return straight_line
 
     def calc_func(self):
-        print(self.func)
+        """What to calculate.
+        
+        Quite messy, but can easily be expanded.
+        You would need to add the corresponding button first
+        and then add here what the function does."""
+        # Use only the part that interests us:
         reduced_spectra = np.copy(self.spectra[:, self.indmin:self.indmax])
         if self.func.split()[0] == "reduced":
-            # The "reduced" part of the name is only used here
+            # The "reduced" part of the function name is only used here
             working_func = ' '.join(self.func.split()[1:][:])
             reduced_spectra -= self.straightline()
+            reduced_spectra -= np.min(reduced_spectra, axis=-1, keepdims=True)
         else:
             working_func = self.func
-        reduced_spectra -= np.min(reduced_spectra, axis=-1, keepdims=True)
+        
         if working_func == "max":
             return np.max(reduced_spectra,
                           axis=-1).reshape(self.ny, self.nx)
@@ -653,6 +682,7 @@ class ShowSelected(object):
                     ).reshape(self.ny, self.nx)
 
     def onselect(self, xmin, xmax):
+        """When you select a region of the spectra."""
         self.xmin = xmin
         self.xmax = xmax
         if self.vline:
@@ -660,26 +690,20 @@ class ShowSelected(object):
             self.vline = None
         self.indmin, self.indmax = np.searchsorted(self.x, (xmin, xmax))
         self.indmax = min(len(self.x) - 1, self.indmax)
-        if self.indmax == self.indmin:
+        if self.indmax == self.indmin: # if only one line
             self.indmax = self.indmin + 1
             self.vline = self.axspectrum.axvline(xmin)
         self.reduced_x = self.x[self.indmin:self.indmax]
         self.draw_img()
 
     def draw_img(self):
+        """Draw/update the image."""
+        # calculate the function:
         img = self.calc_func()
-        biggest = np.max(img)
-        smallest = np.min(img)
-        img /= biggest
         self.imup.set_data(img)
         self.imup.set_clim(np.percentile(img, [1, 99]))
         self.aximg.set_title(f"Calculated {self.func} between "
-                             f"xmin {self.xmin} and {self.xmax}")
-# =============================================================================
-#                              f"{self.reduced_x[0]:.2f} and "
-#                              f"{self.reduced_x[-1]:.2f} cm-1")
-# =============================================================================
-        # self.aximg.set_title(f"{self.func}\nMax/Min value = {biggest:.2f} / {smallest:.2f}")
+                             f"{self.xmin:.2f} and {self.xmax:.2f} cm-1")
         self.fig.canvas.draw()
 
     def scroll_spectra(self, val):
@@ -693,6 +717,7 @@ class ShowSelected(object):
         self.fig.canvas.draw_idle()
 
     def titled(self, ax, frame):
+        """Set the title for the spectrum plot"""
         ax.set_title(f"Spectrum N° {frame} /{self.last_frame + 1}")
 
 class FindBaseline(object):
