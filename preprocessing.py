@@ -8,6 +8,7 @@ Created on Thu Mar 25 18:53:55 2021
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, transform
+from scipy.ndimage import median_filter
 from sklearn.experimental import enable_iterative_imputer
 from sklearn import preprocessing, impute
 import calculate as cc
@@ -217,7 +218,12 @@ def correct_saturated(inputspectra, map_shape=None, copy=False,
     return spectra
 
 
-def remove_CRs(mock_sp3, sigma_kept, _n_x=0, _n_y=0, **initialization):
+def remove_CRs(inputspectra, **initialization):
+    
+    mock_sp3 = inputspectra.spectra
+    sigma_kept = inputspectra.x_values
+    _n_x = inputspectra.n_x
+    _n_y = inputspectra.n_y
     # a bit higher then median, or the area:
     scaling_koeff = np.trapz(mock_sp3, x=sigma_kept, axis=-1)[:, np.newaxis]
     mock_sp3 /= np.abs(scaling_koeff)
@@ -291,4 +297,5 @@ def remove_CRs(mock_sp3, sigma_kept, _n_x=0, _n_y=0, **initialization):
 # =============================================================================
     else:
         print("No Cosmic Rays found!")
-    return mock_sp3
+    inputspectra.spectra = mock_sp3
+    return inputspectra
