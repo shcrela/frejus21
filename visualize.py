@@ -601,10 +601,12 @@ class ShowSelected(object):
 
         # Plot the empty image:
         self.imup = self.aximg.imshow(np.empty_like(self.map_spectra[:,:,0]),
-                                     interpolation='gaussian')
-        if isinstance(map_spectra, WDF):
-            self.aximg.set_xlabel(f"units :  {self.xlabel:.1g}")
-            self.aximg.set_ylabel(f"units :  {self.ylabel:.1g}")
+                                     interpolation='gaussian',
+                                     aspect=self.nx/self.ny)
+        self.fig.colorbar(self.imup, ax=self.aximg)
+        # if isinstance(map_spectra, WDF):
+        #     self.aximg.set_xlabel(f"units :  {self.xlabel:.1g}")
+        #     self.aximg.set_ylabel(f"units :  {self.ylabel:.1g}")
         
         self.fig.canvas.mpl_connect('button_press_event', self.onclick)
         plt.show()

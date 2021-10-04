@@ -15,6 +15,17 @@ from read_WDF_class import WDF
 # from sklearnex import patch_sklearn
 # patch_sklearn()
 
+
+def select_zone(spectra, **kwargs):
+    if isinstance(spectra, WDF):
+        left = kwargs.get('left', spectra.x_values.min())
+        right = kwargs.get('right', spectra.x_values.max())
+        condition = (spectra.x_values >= left) & (spectra.x_values <= right)
+        spectra.x_values = spectra.x_values[condition]
+        spectra.spectra = spectra.spectra[:, condition]
+        spectra.npoints = len(spectra.x_values)
+        return spectra
+
 def scale(spectra, **kwargs):
     """
     scale the spectra

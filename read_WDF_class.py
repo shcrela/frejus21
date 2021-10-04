@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import numpy as np
 import os
@@ -351,9 +351,9 @@ class WDF(object):
                                         zip(origin_labels, origin_set_units)])
         try:
             self.xres = float(self.img_exif["FocalPlaneXResolution"]) /\
-                    self.img_arr.shape[1]  # in µ/px
+                    self.img_arr.shape[1]  # in Âµ/px
             self.yres = float(self.img_exif["FocalPlaneYResolution"]) /\
-                    self.img_arr.shape[0]  # in µ/px
+                    self.img_arr.shape[0]  # in Âµ/px
 
             self.xminpx, self.yminpx = (round(
                                         (self.map_params["InitialCoordinates"][0] -
@@ -411,18 +411,18 @@ class WDF(object):
             print("Problem loading image")
 
     def show_grid(self):
-        fig, ax = plt.subplots()
-        ax.imshow(self.img_arr)
+        self.fig, self.ax = plt.subplots()
+        self.ax.imshow(self.img_arr)
         # map_zone = Rectangle((self.xminpx, self.yminpx), self.xsizepx, self.ysizepx)
         # ax.add_patch(map_zone)
         x_pxvals = np.linspace(self.xminpx, self.xmaxpx, self.map_params["NbSteps"][0])
         y_pxvals = np.linspace(self.yminpx, self.ymaxpx, self.map_params["NbSteps"][1])
         for xxx in x_pxvals:
-            ax.vlines(xxx, ymin=self.yminpx, ymax=self.ymaxpx, lw=1, alpha=0.2)
+            self.ax.vlines(xxx, ymin=self.yminpx, ymax=self.ymaxpx, lw=1, alpha=0.1)
         for yyy in y_pxvals:
-            ax.hlines(yyy, xmin=self.xminpx, xmax=self.xmaxpx, lw=1, alpha=0.2)
-        ax.scatter(self.xminpx, self.yminpx, marker="X", s=50, c='r')
-        fig.show()
+            self.ax.hlines(yyy, xmin=self.xminpx, xmax=self.xmaxpx, lw=1, alpha=0.1)
+        # ax.scatter(self.xminpx, self.yminpx, marker="X", s=50, c='r')
+        self.fig.show()
 
     def print_block_header(self, name, i):
         if self.verbose:
