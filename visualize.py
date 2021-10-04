@@ -542,6 +542,7 @@ class ShowSelected(object):
     def __init__(self, map_spectra, x=None):
 
         if isinstance(map_spectra, WDF):
+            map_spectra = pp.order(map_spectra)
             self.x = map_spectra.x_values
             self.nshifts = map_spectra.npoints
             self.nx, self.ny = map_spectra.map_params['NbSteps'][
@@ -549,13 +550,15 @@ class ShowSelected(object):
             self.spectra = map_spectra.spectra
             self.xlabel, self.ylabel = map_spectra.map_params["NbSteps"][
                                     map_spectra.map_params["NbSteps"] > 1]
+            
         else:
             self.x = x
             self.ny, self.nx, self.nshifts = map_spectra.shape
             self.spectra = map_spectra.reshape(-1, self.nshifts)
+            # self.spectra, self.x = pp.order(self.spectra, self.x)
         if self.x is None:
             self.x = np.arange(self.nshifts)
-        self.spectra, self.x = pp.order(self.spectra, self.x)
+        
         self.map_spectra = self.spectra.reshape(self.ny, self.nx, self.nshifts)
 
         # Preparing the plot:

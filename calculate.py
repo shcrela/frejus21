@@ -8,10 +8,21 @@ Created on Thu Mar 25 18:50:13 2021
 import numpy as np
 from scipy import sparse, ndimage
 from scipy.optimize import minimize_scalar
+from sklearn import decomposition
 from joblib import delayed, Parallel
 from warnings import warn
 from tqdm import tqdm
 
+def deconvolute_nmf(inputspectra, n_components, **kwargs):
+    
+    
+    max_iter = kwargs.get("max_iter", 7)
+    nmf_model = decomposition.NMF(n_components=n_components,
+                                  init='nndsvda', max_iter=max_iter, l1_ratio=1)
+    mix = nmf_model.fit_transform(inputspectra.spectra)
+    components = nmf_model.components_
+    reconstructed_spectra = nmf_model.inverse_transform(mix)
+    return mix, components, reconstructed_spectra
 
 def find_barycentre(x: np.array, y: np.array, method: str = 'simple vectorized') -> tuple((np.array, np.array)):
     """Calculate the coordinates of the barycentre value.

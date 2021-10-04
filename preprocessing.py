@@ -10,14 +10,44 @@ import matplotlib.pyplot as plt
 from skimage import io, transform
 from scipy.ndimage import median_filter
 from sklearn.experimental import enable_iterative_imputer
-from sklearn import preprocessing, impute
+from sklearn import preprocessing, impute, decomposition
 import calculate as cc
 from read_WDF_class import WDF
 # from sklearnex import patch_sklearn
 # patch_sklearn()
 
 
+def pca_clean(inputspectra, n_components):
+    """Clean (smooth) the spectra using PCA.
+    Parameters:
+    -----------
+        inputspectra: instace of WDF class
+        n_components: int
+    Returns:
+    --------
+        updated object with cleaned spectra as .spectra
+        spectra_reduced: numpy array
+            it is the the attribute added to the WDF object
+    """
+    spectra = inputspectra.spectra
+    pca = decomposition.PCA(n_components)
+    pca_fit = pca.fit(spectra)
+    inputspectra.spectra_reduced = pca_fit.transform(spectra)
+    inputspectra.spectra = pca_fit.inverse_transform(inputspectra.spectra_reduced)
+    return inputspectra
+
 def select_zone(spectra, **kwargs):
+    """Isolate the zone of interest in the input spectra.
+    
+    Parameters:
+    -----------
+        left, right : float
+            The start and the end of the zone of interest in x_values (Ramans shifts)
+    Returns:
+    --------
+        spectra: instance of WDF class
+            Updated object, without anything outside of the zone of interest."""
+    
     if isinstance(spectra, WDF):
         left = kwargs.get('left', spectra.x_values.min())
         right = kwargs.get('right', spectra.x_values.max())
@@ -27,14 +57,26 @@ def select_zone(spectra, **kwargs):
         spectra.npoints = len(spectra.x_values)
         return spectra
 
-def scale(spectra, **kwargs):
+def normalize(inputspectra, **kwargs):
     """
     scale the spectra
 
     Parameters
     ----------
-    spectra : TYPE
-        DESCRIPTION.
+    inputspectra : WDF class
+    method: str
+        one of ["l1", "l2", "max", "min_max", "wave_number", "robust_scale", "area"]
+        default is "area"
+    
+    if method == "robust_scale": the scaling with respect to given quantile range
+    see https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.robust_scale.html
+        quantile : tuple
+            default = (5, 95)
+        centering: bool
+            default = False
+    if method == "wave_number":
+        wave_number: float
+        sets the intensity at the given wavenumber as 1 an the rest is scaled accordingly.
     **kwargs : TYPE
         DESCRIPTION.
 
@@ -43,32 +85,44 @@ def scale(spectra, **kwargs):
     None.
 
     """
+    spectra = inputspectra.spectra
+    method = kwargs.get("method", "area")
+    if method in ["l1", "l2", "max"]:
+        normalized_spectra = preprocessing.normalize(spectra, axis=-1, norm=method, copy=False) 
+    if method == "min_max":
+        normalized_spectra = preprocessing.minmax_scale(spectra, axis=-1, copy=False)
+    if method == "area":
+        normalized_spectra = spectra / np.trapz(spectra, inputspectra.x_values)[:, None]
+    if method == "wave_number":
+        spectra /= spectra[:,
+                           inputspectra.x_values ==\
+                           kwargs.get("wave_number",
+                                      inputspectra.x_values.min())][:, None]
+    if method == "robust_scale":
+        normalized_spectra =  preprocessing.robust_scale(spectra, axis=-1,
+                                                      with_centering=False,
+                                                      quantile_range=(5,95))
+    normalized_spectra -= np.min(normalized_spectra, axis=-1, keepdims=True)
+    inputspectra.spectra = normalized_spectra
+    return inputspectra
 
-    return preprocessing.robust_scale(spectra, axis=-1,
-                                      with_centering=False,
-                                      quantile_range=(5,95))
-
-
-def order(spectra, x_values):
+def order(inputspectra):
     """
-    Order values so that x_values grow.
+    Order values in the ascending wavenumber (x_values) order.
 
     Parameters:
     -----------
-    spectra: numpy array
+    spectra: WDF class instance
         Your input spectra
-    x_values: 1D numpy array
-        Raman shifts
-
     Returns:
     --------
     ordered input values
     """
-
-    if np.all(np.diff(x_values) <= 0):
-        x_values = x_values[::-1]
-        spectra = spectra[:,::-1]
-    return spectra, x_values
+    
+    if np.all(np.diff(inputspectra.x_values) <= 0):
+        inputspectra.x_values = inputspectra.x_values[::-1]
+        inputspectra.spectra = inputspectra.spectra[:,::-1]
+    return inputspectra
 
 
 def find_zeros(spectra):

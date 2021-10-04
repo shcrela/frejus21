@@ -410,7 +410,7 @@ class WDF(object):
         except:
             print("Problem loading image")
 
-    def show_grid(self):
+    def show_grid(self, alpha=0.1):
         self.fig, self.ax = plt.subplots()
         self.ax.imshow(self.img_arr)
         # map_zone = Rectangle((self.xminpx, self.yminpx), self.xsizepx, self.ysizepx)
@@ -418,9 +418,9 @@ class WDF(object):
         x_pxvals = np.linspace(self.xminpx, self.xmaxpx, self.map_params["NbSteps"][0])
         y_pxvals = np.linspace(self.yminpx, self.ymaxpx, self.map_params["NbSteps"][1])
         for xxx in x_pxvals:
-            self.ax.vlines(xxx, ymin=self.yminpx, ymax=self.ymaxpx, lw=1, alpha=0.1)
+            self.ax.vlines(xxx, ymin=self.yminpx, ymax=self.ymaxpx, lw=1, alpha=alpha)
         for yyy in y_pxvals:
-            self.ax.hlines(yyy, xmin=self.xminpx, xmax=self.xmaxpx, lw=1, alpha=0.1)
+            self.ax.hlines(yyy, xmin=self.xminpx, xmax=self.xmaxpx, lw=1, alpha=alpha)
         # ax.scatter(self.xminpx, self.yminpx, marker="X", s=50, c='r')
         self.fig.show()
 
