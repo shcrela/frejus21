@@ -88,7 +88,7 @@ def normalize(inputspectra, **kwargs):
     spectra = inputspectra.spectra
     method = kwargs.get("method", "area")
     if method in ["l1", "l2", "max"]:
-        normalized_spectra = preprocessing.normalize(spectra, axis=-1, norm=method, copy=False) 
+        normalized_spectra = preprocessing.normalize(spectra, axis=1, norm=method, copy=False) 
     if method == "min_max":
         normalized_spectra = preprocessing.minmax_scale(spectra, axis=-1, copy=False)
     if method == "area":

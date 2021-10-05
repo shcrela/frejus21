@@ -18,7 +18,7 @@ def deconvolute_nmf(inputspectra, n_components, **kwargs):
     
     max_iter = kwargs.get("max_iter", 7)
     nmf_model = decomposition.NMF(n_components=n_components,
-                                  init='nndsvda', max_iter=max_iter, l1_ratio=1)
+                                  init='nndsvda', max_iter=max_iter, solver='mu')#, alpha_W=0, alpha_H=100, l1_ratio=1)
     mix = nmf_model.fit_transform(inputspectra.spectra)
     components = nmf_model.components_
     reconstructed_spectra = nmf_model.inverse_transform(mix)
