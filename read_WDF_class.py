@@ -422,7 +422,7 @@ class WDF(object):
         for yyy in y_pxvals:
             self.ax.hlines(yyy, xmin=self.xminpx, xmax=self.xmaxpx, lw=1, alpha=alpha)
         # ax.scatter(self.xminpx, self.yminpx, marker="X", s=50, c='r')
-        self.fig.show()
+        # self.fig.show()
 
     def print_block_header(self, name, i):
         if self.verbose:
