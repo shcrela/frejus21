@@ -26,24 +26,37 @@ Run everything locally. (You must have ana(mini)conda installed)
   <summary>Example A2</summary>
   
   ```bash
-    wget ./data/exampleA2.wdf "https://filesender.renater.fr/download.php?token=970bff29-0d7e-4106-a128-0d6c34488c4f&files_ids=8905055"
+    wget ./data/exampleA2.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013560"
   ```
 </details>
 <details>
   <summary>Example M1</summary>
   
   ```bash
-    wget ./data/exampleB1.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013556"
+    wget ./data/exampleM1.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013556"
   ```
 </details>
 <details>
-  <summary>Example M2</summary>  
+  <summary>Example M1bis (avoid, too hard)</summary>  
     
   ```bash
-    wget ./data/exampleB2.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013558"
+    wget ./data/exampleM2.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013558"
+  ```
+</details>  
+<details>
+  <summary>Example M3</summary>  
+    
+  ```bash
+    wget ./data/exampleM3.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013559"
   ```
 </details>  
 </div>
+
+<details>
+  <summary>Example M3bis</summary>  
+    
+  ```bash
+    wget ./data/exampleM4.wdf "https://filesender.renater.fr/download.php?token=91a45abe-86e3-4f9b-bf6c-f6cbfc01b2ec&files_ids=9013563"
 <div style="color: gray; margin-left: 1em">
 <details>
     <summary>6. Optionally (create new conda environment)</summary>
