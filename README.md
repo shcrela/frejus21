@@ -20,6 +20,7 @@ Run everything locally. (You must have ana(mini)conda installed)
 1. Open the terminal[<sup>1</sup>](#fn1) on your computer and navigate to the folder of your choice. 
 2. Copy/Paste the following commands into your terminal:
 3. `git clone https://github.com/shcrela/frejus21.git`  
+If you don't have git installed, once on the github page clik on the only green button and download zip
 4.  `cd frejus21`  
 5. Download the data (click on your group to see the code to copy/paste into your terminal)
 
